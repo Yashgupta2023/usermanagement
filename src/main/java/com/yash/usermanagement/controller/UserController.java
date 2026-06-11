@@ -1,38 +1,38 @@
 package com.yash.usermanagement.controller;
 
 import com.yash.usermanagement.entity.User;
+import com.yash.usermanagement.service.UserService;
 import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/users")
 public class UserController {
 
-    private List<User> users = new ArrayList<>();
+    @Autowired
+    private UserService userService;
 
     @GetMapping
     public List<User> getAllUsers() {
-        return users;
+        return userService.getAllUsers();
     }
 
     @GetMapping("/{id}")
-    public User getUserById(@PathVariable Long id) {
-
-        for (User user : users) {
-            if (user.getId().equals(id)) {
-                return user;
-            }
-        }
-
-        return null;
+    public Optional<User> getUserById(@PathVariable Long id) {
+        return userService.getUserById(id);
     }
 
     @PostMapping
     public User createUser(@Valid @RequestBody User user) {
-        users.add(user);
-        return user;
+        return userService.createUser(user);
+    }
+
+    @GetMapping("/email/{email}")
+    public Optional<User> getUserByEmail(@PathVariable String email) {
+        return userService.getUserByEmail(email);
     }
 }
