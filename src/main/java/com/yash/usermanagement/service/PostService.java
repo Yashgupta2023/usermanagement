@@ -1,7 +1,9 @@
 package com.yash.usermanagement.service;
 
 import com.yash.usermanagement.entity.Post;
+import com.yash.usermanagement.entity.User;
 import com.yash.usermanagement.repository.PostRepository;
+import com.yash.usermanagement.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,6 +16,9 @@ public class PostService {
     @Autowired
     private PostRepository postRepository;
 
+    @Autowired
+    private UserRepository userRepository;
+
     public List<Post> getAllPosts() {
         return postRepository.findAll();
     }
@@ -23,6 +28,19 @@ public class PostService {
     }
 
     public Post createPost(Post post) {
+        return postRepository.save(post);
+    }
+
+    public Post createPostForUser(Long userId, Post post) {
+
+        User user = userRepository.findById(userId).orElse(null);
+
+        if (user == null) {
+            return null;
+        }
+
+        post.setUser(user);
+
         return postRepository.save(post);
     }
 

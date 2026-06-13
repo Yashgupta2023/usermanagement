@@ -1,8 +1,12 @@
 package com.yash.usermanagement.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "users")
@@ -16,8 +20,15 @@ public class User {
     private String username;
 
     @Email(message = "Invalid email format")
-    @NotBlank(message = "Email is required")
     private String email;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    @JsonManagedReference
+    private List<Post> posts = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    @JsonManagedReference(value = "user-comments")
+    private List<Comment> comments = new ArrayList<>();
 
     public User() {
     }
@@ -50,5 +61,21 @@ public class User {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public List<Post> getPosts() {
+        return posts;
+    }
+
+    public void setPosts(List<Post> posts) {
+        this.posts = posts;
+    }
+
+    public List<Comment> getComments() {
+        return comments;
+    }
+
+    public void setComments(List<Comment> comments) {
+        this.comments = comments;
     }
 }

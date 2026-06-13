@@ -33,6 +33,20 @@ public class PostController {
         return postService.createPost(post);
     }
 
+    @PostMapping("/user/{userId}")
+    public ResponseEntity<Post> createPostForUser(
+            @PathVariable Long userId,
+            @Valid @RequestBody Post post) {
+
+        Post savedPost = postService.createPostForUser(userId, post);
+
+        if (savedPost == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.ok(savedPost);
+    }
+
     @PutMapping("/{id}")
     public ResponseEntity<Post> updatePost(
             @PathVariable Long id,

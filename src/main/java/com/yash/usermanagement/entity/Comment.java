@@ -1,44 +1,38 @@
 package com.yash.usermanagement.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @Entity
-@Table(name = "posts")
-public class Post {
+@Table(name = "comments")
+public class Comment {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @NotBlank(message = "Title is required")
-    private String title;
 
     @NotBlank(message = "Content is required")
     private String content;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
-    @JsonBackReference
+    @JsonBackReference(value = "user-comments")
     private User user;
 
-    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
-    @JsonManagedReference(value = "post-comments")
-    private List<Comment> comments = new ArrayList<>();
+    @ManyToOne
+    @JoinColumn(name = "post_id")
+    @JsonBackReference(value = "post-comments")
+    private Post post;
 
-    public Post() {
+    public Comment() {
     }
 
-    public Post(Long id, String title, String content, User user) {
+    public Comment(Long id, String content, User user, Post post) {
         this.id = id;
-        this.title = title;
         this.content = content;
         this.user = user;
+        this.post = post;
     }
 
     public Long getId() {
@@ -47,14 +41,6 @@ public class Post {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
     }
 
     public String getContent() {
@@ -73,11 +59,11 @@ public class Post {
         this.user = user;
     }
 
-    public List<Comment> getComments() {
-        return comments;
+    public Post getPost() {
+        return post;
     }
 
-    public void setComments(List<Comment> comments) {
-        this.comments = comments;
+    public void setPost(Post post) {
+        this.post = post;
     }
 }
