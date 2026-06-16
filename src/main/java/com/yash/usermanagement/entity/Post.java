@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,6 +22,8 @@ public class Post {
 
     @NotBlank(message = "Content is required")
     private String content;
+
+    private LocalDateTime createdAt;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
@@ -41,6 +44,11 @@ public class Post {
         this.user = user;
     }
 
+    @PrePersist
+    public void prePersist() {
+        this.createdAt = LocalDateTime.now();
+    }
+
     public Long getId() {
         return id;
     }
@@ -49,20 +57,28 @@ public class Post {
         this.id = id;
     }
 
-    public String getTitle() {
+    public @NotBlank(message = "Title is required") String getTitle() {
         return title;
     }
 
-    public void setTitle(String title) {
+    public void setTitle(@NotBlank(message = "Title is required") String title) {
         this.title = title;
     }
 
-    public String getContent() {
+    public @NotBlank(message = "Content is required") String getContent() {
         return content;
     }
 
-    public void setContent(String content) {
+    public void setContent(@NotBlank(message = "Content is required") String content) {
         this.content = content;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
     }
 
     public User getUser() {
