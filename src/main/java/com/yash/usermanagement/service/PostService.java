@@ -5,6 +5,8 @@ import com.yash.usermanagement.entity.User;
 import com.yash.usermanagement.repository.PostRepository;
 import com.yash.usermanagement.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -22,6 +24,10 @@ public class PostService {
 
     public List<Post> getAllPosts() {
         return postRepository.findAll();
+    }
+
+    public Page<Post> getPosts(Pageable pageable) {
+        return postRepository.findAll(pageable);
     }
 
     public Optional<Post> getPostById(Long id) {
@@ -69,22 +75,18 @@ public class PostService {
         return true;
     }
 
-    // Day 6 - Search Posts By Keyword
     public List<Post> searchPosts(String keyword) {
         return postRepository.findPostsByKeyword(keyword);
     }
 
-    // Day 6 - Find Posts By User
     public List<Post> getPostsByUser(Long userId) {
         return postRepository.findPostsByUserId(userId);
     }
 
-    // Day 6 - Native SQL Search
     public List<Post> searchPostsNative(String keyword) {
         return postRepository.findPostsByKeywordNative(keyword);
     }
 
-    // Day 6 Mini Task - Posts Created In Last 7 Days
     public List<Post> getPostsCreatedLast7Days() {
 
         LocalDateTime sevenDaysAgo =

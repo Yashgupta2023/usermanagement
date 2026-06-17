@@ -4,6 +4,10 @@ import com.yash.usermanagement.entity.Post;
 import com.yash.usermanagement.service.PostService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,8 +22,19 @@ public class PostController {
     private PostService postService;
 
     @GetMapping
-    public List<Post> getAllPosts() {
-        return postService.getAllPosts();
+    public Page<Post> getAllPosts(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size,
+            @RequestParam(defaultValue = "id") String sortBy,
+            @RequestParam(defaultValue = "asc") String direction) {
+
+        Sort sort = direction.equalsIgnoreCase("desc")
+                ? Sort.by(sortBy).descending()
+                : Sort.by(sortBy).ascending();
+
+        Pageable pageable = PageRequest.of(page, size, sort);
+
+        return postService.getPosts(pageable);
     }
 
     @GetMapping("/{id}")
@@ -76,27 +91,39 @@ public class PostController {
         return ResponseEntity.ok("Post deleted successfully");
     }
 
-    // Day 6 - Search Posts by Keyword (JPQL)
     @GetMapping("/search")
     public List<Post> searchPosts(@RequestParam String keyword) {
         return postService.searchPosts(keyword);
     }
 
-    // Day 6 - Find Posts By User
     @GetMapping("/user/{userId}")
     public List<Post> getPostsByUser(@PathVariable Long userId) {
         return postService.getPostsByUser(userId);
     }
 
-    // Day 6 - Native SQL Search
     @GetMapping("/search-native")
     public List<Post> searchPostsNative(@RequestParam String keyword) {
         return postService.searchPostsNative(keyword);
     }
 
-    // Day 6 Mini Task - Recent Posts
     @GetMapping("/recent")
     public List<Post> getRecentPosts() {
         return postService.getPostsCreatedLast7Days();
+    }
+
+    @PostMapping("/dummy")
+    public String createDummyPosts() {
+
+        for (int i = 1; i <= 25; i++) {
+
+            Post post = new Post();
+
+            post.setTitle("Dummy Post " + i);
+            post.setContent("Dummy Content " + i);
+
+            postService.createPostForUser(2L, post);
+        }
+
+        return "25 Dummy Posts Created";
     }
 }
