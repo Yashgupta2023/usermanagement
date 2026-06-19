@@ -1,13 +1,18 @@
 package com.yash.usermanagement.service;
 
+import com.yash.usermanagement.dto.CreateUserRequest;
+import com.yash.usermanagement.dto.UpdateUserRequest;
+import com.yash.usermanagement.dto.UserDTO;
 import com.yash.usermanagement.entity.User;
 import com.yash.usermanagement.exception.DuplicateResourceException;
 import com.yash.usermanagement.exception.ResourceNotFoundException;
+import com.yash.usermanagement.mapper.MapperUtil;
 import com.yash.usermanagement.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class UserService {
@@ -15,40 +20,54 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
 
-    public List<User> getAllUsers() {
-        return userRepository.findAll();
+    public List<UserDTO> getAllUsers() {
+
+        return userRepository.findAll()
+                .stream()
+                .map(MapperUtil::mapToUserDTO)
+                .collect(Collectors.toList());
     }
 
-    public User createUser(User user) {
+    public UserDTO createUser(CreateUserRequest request) {
 
-        if (userRepository.findByEmail(user.getEmail()).isPresent()) {
+        if (userRepository.findByEmail(request.getEmail()).isPresent()) {
             throw new DuplicateResourceException(
-                    "User already exists with email: " + user.getEmail()
+                    "User already exists with email: " + request.getEmail()
             );
         }
 
-        return userRepository.save(user);
+        User user = new User();
+        user.setUsername(request.getUsername());
+        user.setEmail(request.getEmail());
+
+        User savedUser = userRepository.save(user);
+
+        return MapperUtil.mapToUserDTO(savedUser);
     }
 
-    public User getUserById(Long id) {
+    public UserDTO getUserById(Long id) {
 
-        return userRepository.findById(id)
+        User user = userRepository.findById(id)
                 .orElseThrow(() ->
                         new ResourceNotFoundException(
                                 "User not found with id: " + id
                         ));
+
+        return MapperUtil.mapToUserDTO(user);
     }
 
-    public User getUserByEmail(String email) {
+    public UserDTO getUserByEmail(String email) {
 
-        return userRepository.findByEmail(email)
+        User user = userRepository.findByEmail(email)
                 .orElseThrow(() ->
                         new ResourceNotFoundException(
                                 "User not found with email: " + email
                         ));
+
+        return MapperUtil.mapToUserDTO(user);
     }
 
-    public User updateUser(Long id, User updatedUser) {
+    public UserDTO updateUser(Long id, UpdateUserRequest request) {
 
         User existingUser = userRepository.findById(id)
                 .orElseThrow(() ->
@@ -56,10 +75,12 @@ public class UserService {
                                 "User not found with id: " + id
                         ));
 
-        existingUser.setUsername(updatedUser.getUsername());
-        existingUser.setEmail(updatedUser.getEmail());
+        existingUser.setUsername(request.getUsername());
+        existingUser.setEmail(request.getEmail());
 
-        return userRepository.save(existingUser);
+        User updatedUser = userRepository.save(existingUser);
+
+        return MapperUtil.mapToUserDTO(updatedUser);
     }
 
     public boolean deleteUser(Long id) {

@@ -1,6 +1,8 @@
 package com.yash.usermanagement.controller;
 
-import com.yash.usermanagement.entity.User;
+import com.yash.usermanagement.dto.CreateUserRequest;
+import com.yash.usermanagement.dto.UpdateUserRequest;
+import com.yash.usermanagement.dto.UserDTO;
 import com.yash.usermanagement.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,40 +19,46 @@ public class UserController {
     private UserService userService;
 
     @GetMapping
-    public List<User> getAllUsers() {
+    public List<UserDTO> getAllUsers() {
         return userService.getAllUsers();
     }
 
     @GetMapping("/{id}")
-    public User getUserById(@PathVariable Long id) {
+    public UserDTO getUserById(@PathVariable Long id) {
         return userService.getUserById(id);
     }
 
     @PostMapping
-    public User createUser(@Valid @RequestBody User user) {
-        return userService.createUser(user);
+    public UserDTO createUser(
+            @Valid @RequestBody CreateUserRequest request) {
+
+        return userService.createUser(request);
     }
 
     @GetMapping("/email/{email}")
-    public User getUserByEmail(@PathVariable String email) {
+    public UserDTO getUserByEmail(@PathVariable String email) {
         return userService.getUserByEmail(email);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<User> updateUser(
+    public ResponseEntity<UserDTO> updateUser(
             @PathVariable Long id,
-            @Valid @RequestBody User user) {
+            @Valid @RequestBody UpdateUserRequest request) {
 
-        User updatedUser = userService.updateUser(id, user);
+        UserDTO updatedUser =
+                userService.updateUser(id, request);
 
         return ResponseEntity.ok(updatedUser);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteUser(@PathVariable Long id) {
+    public ResponseEntity<String> deleteUser(
+            @PathVariable Long id) {
 
         userService.deleteUser(id);
 
-        return ResponseEntity.ok("User deleted successfully");
+        return ResponseEntity.ok(
+                "User deleted successfully"
+        );
     }
 }
