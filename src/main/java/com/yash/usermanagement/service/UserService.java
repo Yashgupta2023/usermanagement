@@ -1,12 +1,13 @@
 package com.yash.usermanagement.service;
 
 import com.yash.usermanagement.entity.User;
+import com.yash.usermanagement.exception.DuplicateResourceException;
+import com.yash.usermanagement.exception.ResourceNotFoundException;
 import com.yash.usermanagement.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class UserService {
@@ -19,24 +20,41 @@ public class UserService {
     }
 
     public User createUser(User user) {
+
+        if (userRepository.findByEmail(user.getEmail()).isPresent()) {
+            throw new DuplicateResourceException(
+                    "User already exists with email: " + user.getEmail()
+            );
+        }
+
         return userRepository.save(user);
     }
 
-    public Optional<User> getUserById(Long id) {
-        return userRepository.findById(id);
+    public User getUserById(Long id) {
+
+        return userRepository.findById(id)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException(
+                                "User not found with id: " + id
+                        ));
     }
 
-    public Optional<User> getUserByEmail(String email) {
-        return userRepository.findByEmail(email);
+    public User getUserByEmail(String email) {
+
+        return userRepository.findByEmail(email)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException(
+                                "User not found with email: " + email
+                        ));
     }
 
     public User updateUser(Long id, User updatedUser) {
 
-        User existingUser = userRepository.findById(id).orElse(null);
-
-        if (existingUser == null) {
-            return null;
-        }
+        User existingUser = userRepository.findById(id)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException(
+                                "User not found with id: " + id
+                        ));
 
         existingUser.setUsername(updatedUser.getUsername());
         existingUser.setEmail(updatedUser.getEmail());
@@ -47,7 +65,9 @@ public class UserService {
     public boolean deleteUser(Long id) {
 
         if (!userRepository.existsById(id)) {
-            return false;
+            throw new ResourceNotFoundException(
+                    "User not found with id: " + id
+            );
         }
 
         userRepository.deleteById(id);

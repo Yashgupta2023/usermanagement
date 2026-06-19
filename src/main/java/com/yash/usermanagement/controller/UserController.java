@@ -4,12 +4,10 @@ import com.yash.usermanagement.entity.User;
 import com.yash.usermanagement.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/users")
@@ -24,7 +22,7 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public Optional<User> getUserById(@PathVariable Long id) {
+    public User getUserById(@PathVariable Long id) {
         return userService.getUserById(id);
     }
 
@@ -34,7 +32,7 @@ public class UserController {
     }
 
     @GetMapping("/email/{email}")
-    public Optional<User> getUserByEmail(@PathVariable String email) {
+    public User getUserByEmail(@PathVariable String email) {
         return userService.getUserByEmail(email);
     }
 
@@ -45,22 +43,13 @@ public class UserController {
 
         User updatedUser = userService.updateUser(id, user);
 
-        if (updatedUser == null) {
-            return ResponseEntity.notFound().build();
-        }
-
         return ResponseEntity.ok(updatedUser);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteUser(@PathVariable Long id) {
 
-        boolean deleted = userService.deleteUser(id);
-
-        if (!deleted) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body("User not found");
-        }
+        userService.deleteUser(id);
 
         return ResponseEntity.ok("User deleted successfully");
     }
