@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -18,6 +19,7 @@ public class Post {
     private Long id;
 
     @NotBlank(message = "Title is required")
+    @Size(max = 200, message = "Title cannot exceed 200 characters")
     private String title;
 
     @NotBlank(message = "Content is required")
@@ -57,19 +59,19 @@ public class Post {
         this.id = id;
     }
 
-    public @NotBlank(message = "Title is required") String getTitle() {
+    public String getTitle() {
         return title;
     }
 
-    public void setTitle(@NotBlank(message = "Title is required") String title) {
+    public void setTitle(String title) {
         this.title = title;
     }
 
-    public @NotBlank(message = "Content is required") String getContent() {
+    public String getContent() {
         return content;
     }
 
-    public void setContent(@NotBlank(message = "Content is required") String content) {
+    public void setContent(String content) {
         this.content = content;
     }
 
