@@ -11,9 +11,9 @@ import java.util.List;
 
 @Entity
 @Table(name = "users",
-uniqueConstraints = {
-        @UniqueConstraint(columnNames="email")
-} )
+        uniqueConstraints = {
+                @UniqueConstraint(columnNames = "email")
+        })
 public class User {
 
     @Id
@@ -29,6 +29,10 @@ public class User {
     @Email(message = "Invalid email format")
     private String email;
 
+    @NotBlank(message = "Password is required")
+    @Size(min = 6, message = "Password must be at least 6 characters")
+    private String password;
+
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     @JsonManagedReference
     private List<Post> posts = new ArrayList<>();
@@ -40,10 +44,11 @@ public class User {
     public User() {
     }
 
-    public User(Long id, String username, String email) {
+    public User(Long id, String username, String email, String password) {
         this.id = id;
         this.username = username;
         this.email = email;
+        this.password = password;
     }
 
     public Long getId() {
@@ -68,6 +73,14 @@ public class User {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public List<Post> getPosts() {
