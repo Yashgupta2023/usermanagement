@@ -1,6 +1,7 @@
 package com.yash.usermanagement.entity;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.yash.usermanagement.enums.Role;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -10,10 +11,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name = "users",
+@Table(
+        name = "users",
         uniqueConstraints = {
                 @UniqueConstraint(columnNames = "email")
-        })
+        }
+)
 public class User {
 
     @Id
@@ -21,8 +24,11 @@ public class User {
     private Long id;
 
     @NotBlank(message = "Username is required")
-    @Size(min = 3, max = 50,
-            message = "Username must be between 3 and 50 characters")
+    @Size(
+            min = 3,
+            max = 50,
+            message = "Username must be between 3 and 50 characters"
+    )
     private String username;
 
     @NotBlank(message = "Email is required")
@@ -30,8 +36,12 @@ public class User {
     private String email;
 
     @NotBlank(message = "Password is required")
-    @Size(min = 6, message = "Password must be at least 6 characters")
+    @Size(min = 8, message = "Password must be at least 8 characters")
     private String password;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Role role;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     @JsonManagedReference
@@ -44,11 +54,17 @@ public class User {
     public User() {
     }
 
-    public User(Long id, String username, String email, String password) {
+    public User(Long id,
+                String username,
+                String email,
+                String password,
+                Role role) {
+
         this.id = id;
         this.username = username;
         this.email = email;
         this.password = password;
+        this.role = role;
     }
 
     public Long getId() {
@@ -81,6 +97,14 @@ public class User {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public Role getRole() {
+        return role;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
     }
 
     public List<Post> getPosts() {

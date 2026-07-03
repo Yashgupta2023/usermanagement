@@ -25,18 +25,29 @@ public class JwtUtil {
     // Generate JWT Token
     public String generateToken(UserDetails userDetails) {
 
+        String role = userDetails.getAuthorities()
+                .iterator()
+                .next()
+                .getAuthority();
+
         return Jwts.builder()
                 .subject(userDetails.getUsername())
+                .claim("role", role)
                 .issuedAt(new Date())
                 .expiration(new Date(System.currentTimeMillis() + JWT_EXPIRATION))
                 .signWith(SECRET_KEY)
                 .compact();
     }
-
     // Extract Username (Email)
     public String extractUsername(String token) {
 
         return extractAllClaims(token).getSubject();
+    }
+
+    public String extractRole(String token) {
+
+        return extractAllClaims(token)
+                .get("role", String.class);
     }
 
     // Validate Token

@@ -1,5 +1,6 @@
 package com.yash.usermanagement.service;
 
+import com.yash.usermanagement.enums.Role;
 import com.yash.usermanagement.dto.CreateUserRequest;
 import com.yash.usermanagement.dto.LoginRequest;
 import com.yash.usermanagement.dto.LoginResponse;
@@ -46,7 +47,14 @@ public class AuthService {
 
         user.setUsername(request.getUsername());
         user.setEmail(request.getEmail());
-        user.setPassword(passwordEncoder.encode(request.getPassword()));
+
+        // Encrypt password
+        user.setPassword(
+                passwordEncoder.encode(request.getPassword())
+        );
+
+        // Default role
+        user.setRole(Role.ROLE_USER);
 
         User savedUser = userRepository.save(user);
 
