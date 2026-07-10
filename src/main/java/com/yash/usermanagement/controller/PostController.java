@@ -11,9 +11,11 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
 
+@Tag(name = "Posts", description = "Post Management APIs")
 @RestController
 @RequestMapping("/api/posts")
 public class PostController {
@@ -21,6 +23,7 @@ public class PostController {
     @Autowired
     private PostService postService;
 
+    @Operation(summary = "Get all posts")
     @GetMapping
     public Page<Post> getAllPosts(
             @RequestParam(defaultValue = "0") int page,
@@ -37,6 +40,7 @@ public class PostController {
         return postService.getPosts(pageable);
     }
 
+    @Operation(summary = "Get post by ID")
     @GetMapping("/{id}")
     public ResponseEntity<Post> getPostById(@PathVariable Long id) {
 
@@ -45,11 +49,13 @@ public class PostController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
+    @Operation(summary = "Create a post")
     @PostMapping
     public Post createPost(@Valid @RequestBody Post post) {
         return postService.createPost(post);
     }
 
+    @Operation(summary = "Create post for user")
     @PostMapping("/user/{userId}")
     public ResponseEntity<Post> createPostForUser(
             @PathVariable Long userId,
@@ -64,6 +70,7 @@ public class PostController {
         return ResponseEntity.ok(savedPost);
     }
 
+    @Operation(summary = "Update post")
     @PutMapping("/{id}")
     public ResponseEntity<Post> updatePost(
             @PathVariable Long id,
@@ -78,6 +85,7 @@ public class PostController {
         return ResponseEntity.ok(updatedPost);
     }
 
+    @Operation(summary = "Delete post")
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deletePost(@PathVariable Long id) {
 
@@ -91,26 +99,31 @@ public class PostController {
         return ResponseEntity.ok("Post deleted successfully");
     }
 
+    @Operation(summary = "Search posts")
     @GetMapping("/search")
     public List<Post> searchPosts(@RequestParam String keyword) {
         return postService.searchPosts(keyword);
     }
 
+    @Operation(summary = "Get posts by user")
     @GetMapping("/user/{userId}")
     public List<Post> getPostsByUser(@PathVariable Long userId) {
         return postService.getPostsByUser(userId);
     }
 
+    @Operation(summary = "Native search")
     @GetMapping("/search-native")
     public List<Post> searchPostsNative(@RequestParam String keyword) {
         return postService.searchPostsNative(keyword);
     }
 
+    @Operation(summary = "Get recent posts")
     @GetMapping("/recent")
     public List<Post> getRecentPosts() {
         return postService.getPostsCreatedLast7Days();
     }
 
+    @Operation(summary = "Create dummy posts")
     @PostMapping("/dummy")
     public String createDummyPosts() {
 

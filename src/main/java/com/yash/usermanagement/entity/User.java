@@ -24,11 +24,8 @@ public class User {
     private Long id;
 
     @NotBlank(message = "Username is required")
-    @Size(
-            min = 3,
-            max = 50,
-            message = "Username must be between 3 and 50 characters"
-    )
+    @Size(min = 3, max = 50,
+            message = "Username must be between 3 and 50 characters")
     private String username;
 
     @NotBlank(message = "Email is required")
@@ -36,7 +33,8 @@ public class User {
     private String email;
 
     @NotBlank(message = "Password is required")
-    @Size(min = 8, message = "Password must be at least 8 characters")
+    @Size(min = 8,
+            message = "Password must be at least 8 characters")
     private String password;
 
     @Enumerated(EnumType.STRING)
@@ -50,6 +48,10 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     @JsonManagedReference(value = "user-comments")
     private List<Comment> comments = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    @JsonManagedReference(value = "user-likes")
+    private List<Like> likes = new ArrayList<>();
 
     public User() {
     }
@@ -121,5 +123,13 @@ public class User {
 
     public void setComments(List<Comment> comments) {
         this.comments = comments;
+    }
+
+    public List<Like> getLikes() {
+        return likes;
+    }
+
+    public void setLikes(List<Like> likes) {
+        this.likes = likes;
     }
 }

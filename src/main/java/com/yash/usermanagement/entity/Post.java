@@ -19,7 +19,8 @@ public class Post {
     private Long id;
 
     @NotBlank(message = "Title is required")
-    @Size(max = 200, message = "Title cannot exceed 200 characters")
+    @Size(max = 200,
+            message = "Title cannot exceed 200 characters")
     private String title;
 
     @NotBlank(message = "Content is required")
@@ -36,10 +37,18 @@ public class Post {
     @JsonManagedReference(value = "post-comments")
     private List<Comment> comments = new ArrayList<>();
 
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
+    @JsonManagedReference(value = "post-likes")
+    private List<Like> likes = new ArrayList<>();
+
     public Post() {
     }
 
-    public Post(Long id, String title, String content, User user) {
+    public Post(Long id,
+                String title,
+                String content,
+                User user) {
+
         this.id = id;
         this.title = title;
         this.content = content;
@@ -97,5 +106,13 @@ public class Post {
 
     public void setComments(List<Comment> comments) {
         this.comments = comments;
+    }
+
+    public List<Like> getLikes() {
+        return likes;
+    }
+
+    public void setLikes(List<Like> likes) {
+        this.likes = likes;
     }
 }
