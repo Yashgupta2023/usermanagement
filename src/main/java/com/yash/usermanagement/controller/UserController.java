@@ -4,14 +4,19 @@ import com.yash.usermanagement.dto.CreateUserRequest;
 import com.yash.usermanagement.dto.UpdateUserRequest;
 import com.yash.usermanagement.dto.UserDTO;
 import com.yash.usermanagement.service.UserService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/users")
@@ -60,8 +65,8 @@ public class UserController {
         return ResponseEntity.ok(updatedUser);
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Delete a user")
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteUser(
             @PathVariable Long id) {
@@ -71,5 +76,21 @@ public class UserController {
         return ResponseEntity.ok(
                 "User deleted successfully"
         );
+    }
+
+    @Operation(summary = "Upload profile picture")
+    @PostMapping("/{id}/upload")
+    public ResponseEntity<Map<String, String>> uploadProfilePicture(
+            @PathVariable Long id,
+            @RequestParam("file") MultipartFile file)
+            throws IOException {
+
+        String fileName = userService.uploadProfilePicture(id, file);
+
+        Map<String, String> response = new HashMap<>();
+        response.put("message", "Profile picture uploaded successfully");
+        response.put("fileName", fileName);
+
+        return ResponseEntity.ok(response);
     }
 }

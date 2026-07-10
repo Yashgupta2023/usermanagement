@@ -10,7 +10,9 @@ import com.yash.usermanagement.mapper.MapperUtil;
 import com.yash.usermanagement.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -19,6 +21,9 @@ public class UserService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private FileStorageService fileStorageService;
 
     public List<UserDTO> getAllUsers() {
 
@@ -93,5 +98,28 @@ public class UserService {
 
         userRepository.deleteById(id);
         return true;
+    }
+
+    // ==============================
+    // Upload Profile Picture
+    // ==============================
+
+    public String uploadProfilePicture(Long userId,
+                                       MultipartFile file)
+            throws IOException {
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException(
+                                "User not found with id: " + userId
+                        ));
+
+        String fileName = fileStorageService.uploadFile(file);
+
+        user.setProfilePicture(fileName);
+
+        userRepository.save(user);
+
+        return fileName;
     }
 }
