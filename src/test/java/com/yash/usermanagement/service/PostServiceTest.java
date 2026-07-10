@@ -18,7 +18,8 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class PostServiceTest {
@@ -184,12 +185,12 @@ class PostServiceTest {
     @Test
     void testPagination() {
 
-        when(postRepository.findAll(PageRequest.of(0,5)))
+        when(postRepository.findAll(PageRequest.of(0, 5)))
                 .thenReturn(new PageImpl<>(List.of(new Post())));
 
         assertEquals(
                 1,
-                postService.getPosts(PageRequest.of(0,5))
+                postService.getPosts(PageRequest.of(0, 5))
                         .getContent()
                         .size()
         );

@@ -38,6 +38,7 @@ public class JwtUtil {
                 .signWith(SECRET_KEY)
                 .compact();
     }
+
     // Extract Username (Email)
     public String extractUsername(String token) {
 

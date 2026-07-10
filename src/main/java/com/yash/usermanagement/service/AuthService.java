@@ -1,11 +1,11 @@
 package com.yash.usermanagement.service;
 
-import com.yash.usermanagement.enums.Role;
 import com.yash.usermanagement.dto.CreateUserRequest;
 import com.yash.usermanagement.dto.LoginRequest;
 import com.yash.usermanagement.dto.LoginResponse;
 import com.yash.usermanagement.dto.UserDTO;
 import com.yash.usermanagement.entity.User;
+import com.yash.usermanagement.enums.Role;
 import com.yash.usermanagement.exception.DuplicateResourceException;
 import com.yash.usermanagement.mapper.MapperUtil;
 import com.yash.usermanagement.repository.UserRepository;
